@@ -1,43 +1,42 @@
-import IMatch from '../interfaces/IMatch';
-import errorNotFound from '../externals/errorNotFound';
-
-import Team from '../database/models/team';
+import IGoals from '../interfaces/Igoals';
 import Match from '../database/models/match';
+import Team from '../database/models/team';
+import Token from '../externals/tokenHandler';
 
 class MatchService {
-  getAll = async (): Promise<IMatch[]> => {
-    const allMatches = await Match.findAll({
-      attributes: ['id', 'homeTeam', 'homeTeamGoals', 'awayTeam', 'awayTeamGoals', 'inProgress'],
-      include:
-        [
-          { model: Team, as: 'teamHome', attributes: ['teamName'] },
-          { model: Team, as: 'teamAway', attributes: ['teamName'] },
-        ],
-    });
-
-    if (!allMatches) {
-      throw errorNotFound('Matches not found');
-    }
-
-    return allMatches as IMatch[];
+  private token = new Token();
+  getAll = async () => {
+    const matches = await Match.findAll({ include:
+      [
+        { model: Team, as: 'teamHome', attributes: ['teamName'] },
+        { model: Team, as: 'teamAway', attributes: ['teamName'] },
+      ] });
+    return matches;
   };
 
-  getMatchesInProgress = async (query: boolean): Promise<IMatch[]> => {
-    const matchesInProgress = await Match.findAll({
-      where: { inProgress: query },
-      attributes: ['id', 'homeTeam', 'homeTeamGoals', 'awayTeam', 'awayTeamGoals', 'inProgress'],
+  getInProgress = async (query: boolean) => {
+    const matches = await Match.findAll({ where: { inProgress: query },
       include:
         [
           { model: Team, as: 'teamHome', attributes: ['teamName'] },
           { model: Team, as: 'teamAway', attributes: ['teamName'] },
         ],
     });
+    return matches;
+  };
 
-    if (!matchesInProgress) {
-      throw errorNotFound('Matches not found');
-    }
+  createNewMatch = async (auth: string, match: IGoals): Promise <IGoals> => {
+    await this.token.verifyToken(auth);
+    const newMatch = await Match.create(match);
+    return newMatch;
+  };
 
-    return matchesInProgress as IMatch[];
+  updateProgressMatch = async (id: string) => {
+    await Match.update({ inProgress: false }, { where: { id } });
+  };
+
+  editMatch = async (id: string, homeTeamGoals: number, awayTeamGoals: number) => {
+    await Match.update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
   };
 }
 

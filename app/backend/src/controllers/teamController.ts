@@ -1,27 +1,25 @@
-import { Request, Response, NextFunction } from 'express';
-import TeamService from '../services/teamService';
+import { Request, Response } from 'express';
+import TeamsService from '../services/teamService';
 
-class TeamController {
-  private service = new TeamService();
+export default class TeamsController {
+  public service = new TeamsService();
 
-  getAll = async (req: Request, res: Response, _next: NextFunction) => {
+  public getAll = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const getAllTeams = await this.service.getAll();
-      return res.status(200).json(getAllTeams);
-    } catch (err) {
-      return res.status(500).send(err);
+      const getTeams = await this.service.getAll();
+      return res.status(200).json(getTeams);
+    } catch (err: any) {
+      return res.status(err.status).json({ message: err.message });
     }
   };
 
-  getById = async (req: Request, res: Response, _next: NextFunction) => {
+  public getById = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { id } = req.params;
-      const getTeamId = await this.service.getById(Number(id));
+      const id = parseInt(req.params.id, 10);
+      const getTeamId = await this.service.getById(id);
       return res.status(200).json(getTeamId);
-    } catch (err) {
-      return res.status(500).send(err);
+    } catch (err: any) {
+      return res.status(err.status).json({ message: err.message });
     }
   };
 }
-
-export default TeamController;

@@ -1,19 +1,19 @@
-import { readFileSync } from 'fs';
+import * as fs from 'fs/promises';
 import { sign, verify } from 'jsonwebtoken';
 
-const secret = readFileSync('jwt.evaluation.key');
-
 class Token {
-  generateToken = (received: string) => {
-    const token = sign({ received }, secret, { expiresIn: '8h' });
-    return token;
+  generateToken = async (received: string) => {
+    const token = await fs.readFile('jwt.evaluation.key', 'utf-8');
+    const receivedToken = sign({ received }, token, { expiresIn: '8h', algorithm: 'HS256' });
+    return receivedToken;
   };
 
-  verifyToken = (authorization: string) => {
-    const verifying = verify(authorization, secret);
-    const findToken = Object.values(verifying);
-    const foundToken = findToken.find((tok) => (typeof tok) === 'string');
-    return foundToken;
+  verifyToken = async (authorization: string) => {
+    const token = await fs.readFile('jwt.evaluation.key', 'utf-8');
+    const verified = verify(authorization, token);
+    const findRole = Object.values(verified);
+    const role = findRole.find((item) => (typeof item) === 'string');
+    return role;
   };
 }
 

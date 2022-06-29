@@ -1,10 +1,17 @@
 import { Router } from 'express';
 import MatchController from '../controllers/matchcontroller';
+import MatchMiddleware from '../middlewares/matchMiddleware';
 
-const router = Router();
+const matchRoutes = Router();
 
 const matchController = new MatchController();
 
-router.get('/', matchController.getAll);
+matchRoutes.get('/', matchController.getInProgress);
 
-export default router;
+matchRoutes.post('/', MatchMiddleware.validateTeams, matchController.createNewMatch);
+
+matchRoutes.patch('/:id/finish', matchController.updateProgressMatch);
+
+matchRoutes.patch('/:id', matchController.editMatch);
+
+export default matchRoutes;

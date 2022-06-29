@@ -1,20 +1,16 @@
-import errorNotFound from '../externals/errorNotFound';
 import Team from '../database/models/team';
+import IError from '../externals/errorHandler';
 
 class TeamService {
-  getAll = async (): Promise<Team[]> => {
-    const getAllTeams = await Team.findAll({ raw: true });
-    if (!getAllTeams) { throw errorNotFound('Teams not found'); }
-
-    return getAllTeams;
+  public getAll = async () => {
+    const getTeams = await Team.findAll();
+    return getTeams;
   };
 
-  getById = async (id: number): Promise<Team> => {
-    const getTeamById = await Team.findByPk(id);
-
-    if (!getTeamById) throw errorNotFound('Team not found');
-
-    return getTeamById as Team;
+  public getById = async (id: number) => {
+    const getTeamId = await Team.findByPk(id);
+    if (!getTeamId) throw new IError(404, 'Team not found');
+    return getTeamId;
   };
 }
 
