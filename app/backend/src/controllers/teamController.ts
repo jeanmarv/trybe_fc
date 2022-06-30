@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import TeamsService from '../services/teamService';
 
 export default class TeamsController {
   public service = new TeamsService();
 
-  public getAll = async (req: Request, res: Response): Promise<Response> => {
+  public getAll = async (req: Request, res: Response, _next: NextFunction): Promise<Response> => {
     try {
       const getTeams = await this.service.getAll();
       return res.status(200).json(getTeams);
