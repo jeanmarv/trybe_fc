@@ -3,10 +3,10 @@ import { Options } from 'sequelize';
 
 const config: Options = {
   username: process.env.DB_USER || 'root',
-  password: process.env.DB_PASS || '123456',
-  database: process.env.DB_NAME || 'TRYBE_FUTEBOL_CLUBE',
-  host: process.env.DB_HOST || 'localhost',
-  port: Number(process.env.DB_PORT) || 3002,
+  password: process.env.DB_PASS || 'g2h6aBFB2faF-e4dbghacDFaC2f64bDF',
+  database: process.env.DB_NAME || 'railway',
+  host: process.env.DB_HOST || 'monorail.proxy.rlwy.net',
+  port: Number(process.env.DB_PORT) || 10724,
   dialect: 'mysql',
   dialectOptions: {
     timezone: 'Z',
